@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>เมนูอาหาร | ร้านSP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff8fb; /* พื้นหลังสีชมพูอ่อนๆ */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- แถบเมนูนำทาง (Navbar) --- */
+        nav {
+            background-color: #ee9eda; /* ธีมสีชมพูหลักตามที่คุณต้องการ */
+            padding: 10px 25px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: fixed; /* ปักหมุดให้อยู่ด้านบนเสมอ */
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .nav-group-left, .nav-group-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* CSS ใหม่สำหรับโลโก้ */
+        .site-logo {
+            height: 60px; /* ขนาดเริ่มต้นของโลโก้ */
+            width: auto;
+            margin-bottom: 10px; /* มีผลกับโลโก้ใน footer */
+        }
+
+        /* Override สำหรับโลโก้ใน Navbar */
+        nav .site-logo {
+            height: 55px; /* ปรับให้โลโก้ใน Navbar มีขนาด 55px */
+            margin-bottom: 0; /* ไม่มี margin-bottom ใน Navbar */
+        }
+
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            white-space: nowrap;
+            padding: 5px 0;
+        }
+
+        nav a i {
+            margin-right: 6px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+        
+        /* --- ปุ่ม Login/Register --- */
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .auth-buttons .btn {
+            background-color: #6d6d6d; /* สีเทาเข้มสำหรับปุ่มทั่วไป */
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .auth-buttons .btn.register {
+            background-color: #e64980; /* สีชมพูเข้มสำหรับปุ่มสมัครสมาชิก */
+        }
+
+        .auth-buttons .btn:hover {
+            background-color: #444444; /* สีเข้มขึ้นเมื่อชี้ */
+        }
+
+        .auth-buttons .btn.register:hover {
+            background-color: #c2255c; /* สีเข้มขึ้นเมื่อชี้ */
+        }
+
+        /* --- หัวข้อหลักของหน้า --- */
+        header {
+            background-color: #ff85c0; /* สีชมพูสำหรับหัวข้อหลัก */
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-top: 80px; /* เว้นที่สำหรับ Navbar ที่ปักหมุดไว้ */
+        }
+
+        /* --- กล่องค้นหา --- */
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-grow: 1;
+            max-width: 350px;
+        }
+
+        .search-input {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: 'Kanit', sans-serif;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .search-input:focus {
+            border-color: #e64980; /* เปลี่ยนสีขอบเมื่อ focus */
+            outline: none;
+        }
+
+        .search-button {
+            background-color: #6d6d6d; /* สีเดียวกับปุ่ม Login */
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .search-button:hover {
+            background-color: #444444;
+        }
+
+        /* --- รายการอาหาร --- */
+        .food-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .food-item-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .food-item {
+            background: white;
+            width: 200px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-align: center;
+        }
+
+        .food-item-link:hover .food-item {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(230, 73, 128, 0.2); /* เงาเป็นสีชมพู */
+        }
+
+        .food-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .food-info {
+            padding: 15px;
+        }
+
+        .food-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .food-price {
+            font-size: 1rem;
+            color: #e64980; /* สีชมพูเข้มสำหรับราคา */
+        }
+
+        /* --- Modal Styles (Login/Register) --- */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1001;
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%;
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.6);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe; 
+            margin: 5% auto 15% auto;
+            border: 1px solid #888; 
+            width: 80%; 
+            max-width: 500px;
+            border-radius: 10px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: animatezoom 0.6s;
+        }
+
+        .modal-content input[type=text], 
+        .modal-content input[type=password], 
+        .modal-content input[type=email] {
+            width: 100%; 
+            padding: 12px 20px; 
+            margin: 8px 0;
+            display: inline-block; 
+            border: 1px solid #ccc;
+            box-sizing: border-box; 
+            border-radius: 5px;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .modal-content button {
+            background-color: #e64980; 
+            color: white;
+            padding: 14px 20px; 
+            margin: 8px 0; 
+            border: none;
+            cursor: pointer; 
+            width: 100%; 
+            border-radius: 5px;
+            font-size: 1rem; 
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .modal-content .cancelbtn {
+            width: auto; 
+            padding: 10px 18px; 
+            background-color: #f44336;
+        }
+        
+        .imgcontainer { 
+            text-align: center; 
+            margin: 24px 0 12px 0; 
+            position: relative; 
+        }
+        img.avatar { 
+            width: 120px; 
+            height: 120px; 
+            border-radius: 50%; 
+        }
+        .container { 
+            padding: 16px; 
+        }
+        span.psw { 
+            float: right; 
+            padding-top: 16px; 
+        }
+        .modal .close {
+            position: absolute; 
+            right: 20px; 
+            top: 10px;
+            color: #000; 
+            font-size: 35px; 
+            font-weight: bold;
+        }
+        .modal .close:hover, 
+        .modal .close:focus { 
+            color: #f44336; 
+            cursor: pointer; 
+        }
+        .clearfix::after { 
+            content: ""; 
+            clear: both; 
+            display: table; 
+        }
+        .signupbtn {
+            background-color: #e64980;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: auto; /* Changed from 100% to auto for side-by-side with cancel button */
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: 'Kanit', sans-serif;
+            float: right; /* To align with cancel button */
+        }
+
+
+        @keyframes animatezoom {
+            from {transform: scale(0)} to {transform: scale(1)}
+        }
+        
+        /* --- Footer --- */
+        footer {
+            background-color: #ee9eda; /* ธีมสีชมพูหลัก */
+            color: #4e2a2a; /* สีตัวอักษรเข้มให้อ่านง่ายบนพื้นชมพู */
+            padding: 40px 20px;
+            font-family: 'Kanit', sans-serif;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: auto;
+        }
+
+        footer h3 {
+            margin-top: 0;
+            color: white; /* สีหัวข้อใน footer */
+        }
+        
+        footer a {
+            color: #4e2a2a;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .footer-container {
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: space-between;
+            max-width: 1200px; 
+            margin: auto;
+        }
+
+        .footer-column {
+            flex: 1; 
+            min-width: 200px; 
+            margin-bottom: 20px;
+        }
+        .footer-column ul { 
+            list-style: none; 
+            padding: 0; 
+        }
+        .footer-column li { 
+            margin-bottom: 8px; 
+        }
+        
+        /* --- Copyright Footer --- */
+        .copyright-footer {
+            background-color: #e64980; /* สีชมพูเข้ม */
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        /* --- Responsive adjustments --- */
+        @media (max-width: 992px) {
+            nav { justify-content: center; }
+            .nav-group-left, .nav-group-right { justify-content: center; width: 100%; }
+        }
+
+        @media (max-width: 768px) {
+            nav { position: static; }
+            header { margin-top: 0; font-size: 1.7rem; }
+            .modal-content { width: 95%; margin: 5% auto; }
+            .search-container { max-width: none; width: 90%; }
+            .modal-content .cancelbtn, .modal-content .signupbtn {
+                width: 100%;
+                float: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="nav-group-left">
+            <a href="index.html"><img src="IMG_1094.PNG" alt="ร้านSP Logo" class="site-logo"></a>
+            <a href="index.html"><i class="fas fa-home"></i>หน้าแรก</a>
+            <a href="Foodlist.html"><i class="fas fa-utensils"></i>อาหาร</a>
+            <a href="dessert.html"><i class="fas fa-ice-cream"></i>ขนมหวาน</a>
+            <a href="cake.html"><i class="fas fa-birthday-cake"></i>ทานเล่น</a>
+            <a href="fruit.html"><i class="fas fa-apple-alt"></i>ผลไม้</a>
+            <a href="drink.html"><i class="fas fa-cocktail"></i>เครื่องดื่ม</a>
+        </div>
+
+        <div class="nav-group-right">
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" onkeyup="searchList()" placeholder="ค้นหารายการอาหาร...">
+                <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="auth-buttons">
+                <button onclick="document.getElementById('registerModal').style.display='block'" class="btn register"><i class="fas fa-user-plus"></i> สมัครสมาชิก</button>
+                <button onclick="document.getElementById('loginModal').style.display='block'" class="btn"><i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ</button>
+            </div>
+        </div>
+    </nav>
+    
+    <header>꒰•◡̎•꒱ รายการอาหาร ร้านSP ꒰•◡̎•꒱</header>
+
+    <div class="food-list">
+        <a href="#" class="food-item-link">
+            <div class="food-item">
+                <img class="food-image" src="กินเล่น/37.jpg" alt="เฟรนช์ฟรายส์">
+                <div class="food-info">
+                    <div class="food-name">เฟรนช์ฟรายส์</div>
+                    <div class="food-price">ราคา 45 บาท</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="#" class="food-item-link">
+            <div class="food-item">
+                <img class="food-image" src="กินเล่น/38.jpg" alt="ปีกไก่ทอด">
+                <div class="food-info">
+                    <div class="food-name">ปีกไก่ทอด</div>
+                    <div class="food-price">ราคา 55 บาท</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="#" class="food-item-link">
+            <div class="food-item">
+                <img class="food-image" src="กินเล่น/39.jpg" alt="ลูกชิ้นปิ้ง">
+                <div class="food-info">
+                    <div class="food-name">ลูกชิ้นปิ้ง</div>
+                    <div class="food-price">ราคา 30 บาท</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="#" class="food-item-link">
+            <div class="food-item">
+                <img class="food-image" src="กินเล่น/40.jpg" alt="นักเก็ตไก่">
+                <div class="food-info">
+                    <div class="food-name">นักเก็ตไก่</div>
+                    <div class="food-price">ราคา 40 บาท</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="#" class="food-item-link">
+            <div class="food-item">
+                <img class="food-image" src="กินเล่น/41.jpg" alt="ปอเปี๊ยะทอด">
+                <div class="food-info">
+                    <div class="food-name">ปอเปี๊ยะทอด</div>
+                    <div class="food-price">ราคา 45 บาท</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="#" class="food-item-link">
+            <div class="food-item">
+                <img class="food-image" src="กินเล่น/42.jpg" alt="เต้าหู้ทอด">
+                <div class="food-info">
+                    <div class="food-name">เต้าหู้ทอด</div>
+                    <div class="food-price">ราคา 35 บาท</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="#" class="food-item-link">
+            <div class="food-item">
+                <img class="food-image" src="กินเล่น/43.jpg" alt="ไส้กรอกชีส">
+                <div class="food-info">
+                    <div class="food-name">ไส้กรอกชีส</div>
+                    <div class="food-price">ราคา 40 บาท</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="#" class="food-item-link">
+            <div class="food-item">
+                <img class="food-image" src="กินเล่น/44.jpg" alt="หนังหมูกรอบ">
+                <div class="food-info">
+                    <div class="food-name">หนังหมูกรอบ</div>
+                    <div class="food-price">ราคา 35 บาท</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="#" class="food-item-link">
+            <div class="food-item">
+                <img class="food-image" src="กินเล่น/45.jpg" alt="เกี๊ยวทอด">
+                <div class="food-info">
+                    <div class="food-name">เกี๊ยวทอด</div>
+                    <div class="food-price">ราคา 35 บาท</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="#" class="food-item-link">
+            <div class="food-item">
+                <img class="food-image" src="กินเล่น/46.jpg" alt="ไก่จ๊อ">
+                <div class="food-info">
+                    <div class="food-name">ไก่จ๊อ</div>
+                    <div class="food-price">ราคา 50 บาท</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="#" class="food-item-link">
+            <div class="food-item">
+                <img class="food-image" src="กินเล่น/47.jpg" alt="ข้าวโพดอบเนย">
+                <div class="food-info">
+                    <div class="food-name">ข้าวโพดอบเนย</div>
+                    <div class="food-price">ราคา 30 บาท</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="#" class="food-item-link">
+            <div class="food-item">
+                <img class="food-image" src="กินเล่น/48.jpg" alt="เทมปุระผักรวม">
+                <div class="food-info">
+                    <div class="food-name">เทมปุระผักรวม</div>
+                    <div class="food-price">ราคา 45 บาท</div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <form class="modal-content animate" action="#" method="post">
+            <div class="imgcontainer">
+                <span onclick="document.getElementById('loginModal').style.display='none'" class="close" title="ปิด">&times;</span>
+                <img src="https://www.w3schools.com/howto/img_avatar2.png" alt="Avatar" class="avatar">
+            </div>
+            <div class="container">
+                <h2>เข้าสู่ระบบ</h2>
+                <label for="uname"><b>ชื่อผู้ใช้</b></label>
+                <input type="text" placeholder="ป้อนชื่อผู้ใช้" name="uname" required>
+                <label for="psw"><b>รหัสผ่าน</b></label>
+                <input type="password" placeholder="ป้อนรหัสผ่าน" name="psw" required>
+                <button type="submit">เข้าสู่ระบบ</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <form class="modal-content animate" action="#" method="post">
+            <div class="imgcontainer">
+                <span onclick="document.getElementById('registerModal').style.display='none'" class="close" title="ปิด">&times;</span>
+            </div>
+            <div class="container">
+                <h1>สมัครสมาชิก</h1>
+                <p>กรุณากรอกข้อมูลเพื่อสร้างบัญชีผู้ใช้</p>
+                <hr>
+                <label for="email"><b>อีเมล</b></label>
+                <input type="email" placeholder="ป้อนอีเมล" name="email" required>
+                <label for="psw-reg"><b>รหัสผ่าน</b></label>
+                <input type="password" placeholder="ป้อนรหัสผ่าน" name="psw-reg" required>
+                <label for="psw-repeat"><b>ยืนยันรหัสผ่าน</b></label>
+                <input type="password" placeholder="ยืนยันรหัสผ่าน" name="psw-repeat" required>
+                <div class="clearfix">
+                    <button type="button" onclick="document.getElementById('registerModal').style.display='none'" class="cancelbtn">ยกเลิก</button>
+                    <button type="submit" class="signupbtn">สมัครสมาชิก</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <img src="IMG_1094.PNG" alt="ร้านSP Logo" class="site-logo">
+                <h3>เกี่ยวกับเรา</h3>
+                <ul>
+                    <li>รู้จักร้านอาหาร SP</li>
+                    <li>ก่อตั้งเมื่อ 12 มีนาคม 2566</li>
+                    <li>เวลาเปิด-ปิด 08:30 - 21:30</li>
+                    <li>ที่อยู่: 54/4 พหลโยธิน กม.25 แขวงสายไหม เขตสายไหม กรุงเทพมหานคร 10220</li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>ช่วยเหลือ</h3>
+                <ul>
+                    <li>คำถามที่พบบ่อย</li>
+                    <li>คอลเซ็นเตอร์: 02-826-7260</li>
+                    <li>บริการสมาชิก: 02-826-7327</li>
+                    <li>ติดต่อเรา</li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>ติดตามเรา</h3>
+                <div style="font-size: 1.5rem; display: flex; gap: 15px; margin-bottom: 10px;">
+                    <a href="#" title="Facebook"><i class="fab fa-facebook-square"></i></a>
+                    <a href="#" title="Twitter"><i class="fab fa-twitter-square"></i></a>
+                    <a href="#" title="Instagram"><i class="fab fa-instagram-square"></i></a>
+                    <a href="#" title="Line"><i class="fab fa-line"></i></a>
+                </div>
+                <p>รับโปรโมชั่นและดีลพิเศษก่อนใคร</p>
+                <form>
+                    <input type="email" placeholder="ใส่อีเมลของคุณ" style="padding: 8px; border: none; border-radius: 5px;">
+                    <button style="padding: 8px 12px; border: none; background: white; color: #e64980; border-radius: 5px;">เข้าร่วม</button>
+                </form>
+            </div>
+            <div class="footer-column">
+                <h3>ดาวน์โหลดแอป</h3>
+                <a href="#"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" style="width: 120px; margin-bottom: 5px;"></a><br>
+                <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" style="width: 120px;"></a>
+            </div>
+        </div>
+    </footer>
+
+    <footer class="copyright-footer">© 2025 ร้านSP | อร่อยทุกคำ สดใหม่ทุกวัน</footer>
+
+    <script>
+        // --- จัดการ Modal ---
+        var loginModal = document.getElementById('loginModal');
+        var registerModal = document.getElementById('registerModal');
+        window.addEventListener("click", function(event) {
+            if (event.target == loginModal) {
+                loginModal.style.display = "none";
+            }
+            if (event.target == registerModal) {
+                registerModal.style.display = "none";
+            }
+        });
+
+        // --- ฟังก์ชันค้นหารายการอาหาร (เวอร์ชันปรับปรุง) ---
+        function searchList() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const foodList = document.querySelector(".food-list");
+            const items = foodList.getElementsByClassName('food-item-link'); // เลือกที่ตัวครอบ (ลิงก์)
+
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                const foodName = item.querySelector('.food-name').textContent || item.querySelector('.food-name').innerText;
+                
+                // ตรวจสอบว่าชื่ออาหารมีคำที่ค้นหาอยู่หรือไม่
+                if (foodName.toLowerCase().includes(filter)) {
+                    item.style.display = ""; // แสดงการ์ด
+                } else {
+                    item.style.display = "none"; // ซ่อนการ์ด
+                }
+            }
+        }
+    </script>
+</body>
+</html>
